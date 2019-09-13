@@ -12,16 +12,14 @@ module.exports = class StreamReader {
         this.collector.run();
 
     read = async  ({movie_path, chunks}) => {
-        console.log(1);
         await this.collector.getChunk(movie_path);
-        console.log(2);
         await this.extractor.score(movie_path, chunks);
         return Promise.all(chunks.map(read))
     }
 
 
     log(config, result) {
-        require('fs').appendFileSync(`${this.root_path}/log_contrast_and_gamma_tests.json`, require('util').inspect({date: (new Date()).toString(), result, settings: config }, {depth:Infinity, breakLength: Infinity}) + '\n');
+        // require('fs').appendFileSync(`${this.root_path}/log_contrast_and_gamma_tests.json`, require('util').inspect({date: (new Date()).toString(), result, settings: config }, {depth:Infinity, breakLength: Infinity}) + '\n');
         return {config,result};
     }
 }

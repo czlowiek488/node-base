@@ -6,5 +6,5 @@ exports.bash = (cmd, cwd = './') =>
     exec(cmd, { cwd: normalize(cwd) },
       (err, stdout, stderr) =>
         err
-          ? console.log('ERR executor -bash', { err, stderr, stdout }) || reject(err || stderr)
-          : console.log(`executor -bash "${cmd}"\n`) || resolve(stdout)));
+          ? /*console.log('ERR executor -bash', { err, stderr, stdout }) ||*/ reject(err || stderr)
+          : /*console.log(`executor -bash "${cmd}"\n`) ||*/ resolve(stdout)));

@@ -20,8 +20,8 @@ module.exports = class StreamCollector {
     run = async () => { 
         this.stream = m3u8stream(await this.getStreamUrl(), {chunkReadahead: 0, liveBuffer: 30});
         this.stream.on('data', emptyListener);
-        this.stream.on('end', console.log);
-        this.stream.on('error', console.error);
+        this.stream.on('end', () => {});
+        this.stream.on('error', () => {});
     }    
 
     progressToFile = desired_size => new Promise(resolve => {
