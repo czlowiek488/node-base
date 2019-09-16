@@ -7,6 +7,7 @@
     "file-type": "^12.3.0",
     "moment": "^2.24.0",
     "read-chunk": "^3.2.0",
+    "redis": "^2.8.0",
     "sharp": "^0.23.0",
     "uWebSockets.js": "^15.11.0"
   },

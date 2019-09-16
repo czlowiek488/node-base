@@ -24,6 +24,8 @@ const log = (prefix, message, { timestamp_color = color.text.blue, prefix_color 
 
 exports.db = (...message) =>
     log('DB', message, { prefix_color: color.text.green });
+exports.debug = (...message) =>
+    log('DEBUG', message, { prefix_color: color.text.magenta })
 exports.trace = (...message) =>
     log('TRACE', message, { log_type: 'trace', prefix_color: color.background.white });
 exports.alert = (...message) =>
