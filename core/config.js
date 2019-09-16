@@ -8,4 +8,3 @@ module.exports = (env = undefined) => {
     const path = getPath(env || process.env.APP_ENV || 'dev');
     return requireUncached(path)
 };
-  
