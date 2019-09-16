@@ -1,8 +1,8 @@
 const { createReadStream, createWriteStream, unlink, readFile, mkdir, existsSync, rename, writeFile } = require('fs');
 const { normalize, format, parse } = require('path');
 
-exports.objectToPath = ({ dir, name, ext, base }, with_extension) => {
-  const path = format({ dir, name, ext: with_extension && ext ? `.${ext}` : '', base });
+exports.objectToPath = ({ dir, name, ext, base }) => {
+  const path = format({ dir, name, ext, base });
   return normalize(path);
 };
 exports.objectToDirPath = ({ dir, root }) =>
