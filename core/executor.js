@@ -1,7 +1,7 @@
 const { exec } = require('child_process');
 const { normalize } = require('path');
 
-exports.bash = (cmd, cwd = './') =>
+exports.bash = (cmd, cwd = __dirname) =>
   new Promise((resolve, reject) =>
     exec(cmd, { cwd: normalize(cwd) },
       (err, stdout, stderr) =>

@@ -1,4 +1,5 @@
 const {now} = require('./time');
+const {inspect} = require('util'); 
 
 const color = {
     normal: '\x1b[0m',
@@ -24,10 +25,12 @@ const log = (prefix, message, {timestamp_color = color.text.blue, prefix_color =
 exports.db = (...message) =>
     log('DB', message, {prefix_color: color.text.green });
 exports.trace = (...message) =>
-    log('TRACE', message, {prefix_color: color.background.white});
+    log('TRACE', message, {log_type:'trace',prefix_color: color.background.white});
 exports.alert = (...message) =>
     log('ALERT', message, {prefix_color: color.text.yellow, timestamp_color: color.text.green});
 exports.error = (...message) => 
     log('ERROR', message, {prefix_color: color.background.red, timestamp_color: color.text.red});
 exports.dbError = (...message) =>
     log('DB-ERROR', ...message, {prefix_color: color.background.red, timestamp_color: color.text.green});
+exports.inspect = (...message, inspect_config = {depth: Infinity}) =>
+    log('INSPECT', [inspect(message, inspect_config)], {text_color:color.text.cyan});
