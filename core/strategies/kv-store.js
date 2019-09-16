@@ -1,5 +1,5 @@
-const fake_setex = store => (key, value, time) => {
-    store.set(key, value);
+const fake_setex = store => async (key, value, time) => {
+    await store.set(key, value); //make sure kv-pair is definedbefre delete event initaliziation
     setTimeout(() => store.delete(key), time);
 };
 
