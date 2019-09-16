@@ -10,7 +10,7 @@ const handleDir = async (target_options) => {
 
 const saveImageUsingManySizes = async (source_path, options, with_extension) => {
   for await (const size of this.common.config.sizes) { // this 'for await' is preventing reading file by too many streams at once
-    const path = objectToPath({ ...options, name: `${options.name}_${size}` }, with_extension);
+    const path = objectToPath({ ...options, name: `${options.name}_${size}`, ext: with_extension && ext ? `.${ext}` : '' });
     await resizeAndStoreImage(source_path, path, size);
   }
 };
@@ -20,7 +20,7 @@ const handleContentSave = async (content, target_options, with_extension, additi
   this.common.isInWhiteList(target_options.ext, additional_allowed_extensions);
   const is_image = this.common.isImage(target_options.ext);
   await handleDir(target_options);
-  const path = objectToPath(target_options, with_extension);
+  const path = objectToPath({...target_options, ext: with_extension && ext ? `.${ext}` : ''});
   await upsert(path, content, encoding);
   if (is_image) await saveImageUsingManySizes(path, path, with_extension);
 };
@@ -33,7 +33,7 @@ module.exports = async ({ source_path, file_content }, target_options, with_exte
   if (file_content !== undefined) return handleContentSave(file_content, target_options, with_extension, additional_allowed_extensions);
   this.common.isInWhiteList(target_options.ext, additional_allowed_extensions);
   await handleDir(target_options);
-  const path = objectToPath(target_options, with_extension);
+  const path = objectToPath({...target_options, ext: with_extension && ext ? `.${ext}` : ''});
   if (!!this.common.isImage(target_options.ext)) await saveImageUsingManySizes(source_path, target_options, with_extension);
   else await move(source_path, path);
   return target_options;

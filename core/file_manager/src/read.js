@@ -11,7 +11,7 @@ const getUtf8 = (path, encoding) =>
   get(path, encoding);
 
 module.exports = async (options, with_extension, size, additional_extensions) => {
-  let path = objectToPath(options, with_extension);
+  let path = objectToPath({...options, ext: with_extension && ext ? `.${ext}` : ''});
   if (options.ext === undefined) {
     const { ext } = getMimeAndExtension(path);
     options.ext = ext;
@@ -19,7 +19,7 @@ module.exports = async (options, with_extension, size, additional_extensions) =>
   this.common.isInWhiteList(options.ext, additional_extensions);
   const encoding = await this.common.getEncoding(options.ext);
   if (!!this.common.isImage(options.ext)) options = this.common.handleSize(options, size);
-  path = objectToPath(options, with_extension);
+  path = objectToPath({...options, ext: with_extension && ext ? `.${ext}` : ''});
   switch (encoding) {
     case 'binary': return getBinary(path, encoding);
     case 'utf8': return getUtf8(path, encoding);

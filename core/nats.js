@@ -15,7 +15,7 @@ module.exports = (connection = undefined) => {
             nats.write(channel, { action_id, payload }),
         call: (channel, message, timeout = 5000, options = {}) =>
             new Promise((resolve, reject) => 
-                nats.requestOne( channel, JSON.stringify(message), options, timeout, response => 
+                nats.requestOne(channel, JSON.stringify(message), options, timeout, response => 
                         response instanceof Nats.NatsError
                             ? resolve(JSON.parse(response))
                             : reject(response))),
