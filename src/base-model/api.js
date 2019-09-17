@@ -1,10 +1,10 @@
-const Compare = require('../../core/validator/compare');
+const { compare, basic: { isFunction } } = require('../../core/validator');
 const uWS = require('uWebSockets.js')
 const Model = require('../../driver/strategies/model');
 module.exports = (model, { rest = false, websocket = false, port }) => {
     const app = uWS.App({});
 
-    const compare_result_start = Compare.onKeys(model, 'some', ['apiHandler'], value => value instanceof Function)
+    const compare_result_start = compare.onKeys(model, 'some', ['apiHandler'], isFunction)
     if (compare_result_start !== true) {
         throw Error(`API INITIALIZATION FAILED! ${JSON.stringify(compare_result_start)}`)
     }

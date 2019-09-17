@@ -1,4 +1,4 @@
-const Compare = require('../../core/validator/compare');
+const { compare, basic: { isFunction } } = require('../../core/validator');
 
 const fake_setex = store => async (key, value, time) => {
     await store.set(key, value);
@@ -6,11 +6,11 @@ const fake_setex = store => async (key, value, time) => {
 };
 
 module.exports = (store) => {
-    const compare_result = Compare.onKeys(broker, 'some', ['get', 'set', 'delete'], value => value instanceof Function);
+    const compare_result = compare.onKeys(broker, 'some', ['get', 'set', 'delete'], isFunction);
     if (compare_result !== true) {
         throw Error(`KEY-VALUE-STORE INITIALIZATION FAILED! - ${JSON.stringify(compare_result)}`);
     }
-    if (!(store['setex'] instanceof Function)) {
+    if (!isFunction(store['setex'])) {
         store['setex'] = fake_setex(store);
     }
     const accessable = {

@@ -1,9 +1,9 @@
-const Compare = require('../../core/validator/compare');
+const { compare, basic: { isFunction, isString } } = require('../../core/validator');
 
 module.exports = ({ errorHandler, MessageBroker, family, name, model }) => {
-    const compare_result = Compare.many([
-        Compare.onKeys({ family, name }, 'some', ['family', 'name'], value => typeof value === 'string'),
-        Compare.onKeys({ errorHandler }, 'some', ['errorHandler'], value => value instanceof Function)
+    const compare_result = compare.many([
+        compare.onKeys({ family, name }, 'some', ['family', 'name'], isString),
+        compare.onKeys({ errorHandler }, 'some', ['errorHandler'], isFunction)
     ]);
     if (compare_result !== true) {
         throw Error(`MICRO-SERVICE INITIALIZATION FAILED! ${JSON.stringify(compare_result)}`)
@@ -14,7 +14,7 @@ module.exports = ({ errorHandler, MessageBroker, family, name, model }) => {
     const requestHandler = async (request, replyTo) => {
         try {
             const { endpoint, data } = request;
-            if (!(model[endpoint] instanceof Function)) errorHandler(Error(`EndpointIsMissing - ${request} - ${Object.keys(model)}`));
+            if (!isFunction(model[endpoint])) errorHandler(Error(`EndpointIsMissing - ${request} - ${Object.keys(model)}`));
             const result = await model[endpoint](data);
             model.eventHandler('request', { family, name, message: `Request for {${name}.${endpoint}(${result}})` });
             await MessageBroker.publish(replyTo, result);

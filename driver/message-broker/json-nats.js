@@ -1,4 +1,5 @@
 const MessageBroker = require('../strategies/message-broker');
+const { basic: { isIstance } } = require('../../core/validator')
 const Nats = require('nats');
 
 module.exports = connection => {
@@ -13,7 +14,7 @@ module.exports = connection => {
         request: (channel, message, timeout = 5000, options = {}) =>
             new Promise((resolve, reject) =>
                 nats.requestOne(channel, message, options, timeout, response =>
-                    response instanceof Nats.NatsError
+                    isIstance(response, Nats.NatsError)
                         ? reject(response)
                         : resolve(response))),
     }, {
