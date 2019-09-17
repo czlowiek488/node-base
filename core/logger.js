@@ -19,22 +19,15 @@ const color = {
     }
 }
 
-const log = (prefix, message, { timestamp_color = color.text.blue, prefix_color = color.text.magenta, text_color = color.text.white, log_type = 'log' }) =>
-    console[log_type](timestamp_color, now(), prefix_color, prefix, text_color, ...message, color.normal);
+const log = (prefix, { deep = false, timestamp_color = color.text.blue, prefix_color = color.text.magenta, text_color = color.text.white, log_type = 'log' }) =>
+    (...message) => console[log_type](timestamp_color, now(), prefix_color, prefix, text_color, ...message, color.normal);
 
-exports.db = (...message) =>
-    log('DB', message, { prefix_color: color.text.green });
-exports.debug = (...message) =>
-    log('DEBUG', message, { prefix_color: color.text.magenta })
-exports.trace = (...message) =>
-    log('TRACE', message, { log_type: 'trace', prefix_color: color.background.white });
-exports.alert = (...message) =>
-    log('ALERT', message, { prefix_color: color.text.yellow, timestamp_color: color.text.green });
-exports.error = (...message) =>
-    log('ERROR', message, { prefix_color: color.background.red, timestamp_color: color.text.red });
-exports.dbError = (...message) =>
-    log('DB-ERROR', ...message, { prefix_color: color.background.red, timestamp_color: color.text.green });
-exports.inspect = (...message) =>
-    log('INSPECT', [inspect(message, { depth: Infinity })], { text_color: color.text.cyan });
-exports.driver = (...message) =>
-    log('DRIVER', ...message, { prefix_color: color.text.yellow, timestamp_color: color.text.yellow });
+exports.trace = log('TRACE', { log_type: 'trace', prefix_color: color.background.white });
+exports.inspect = log('INSPECT', { deep: true, text_color: color.text.cyan });
+
+exports.db = log('DB', { prefix_color: color.text.green });
+exports.debug = log('DEBUG', { prefix_color: color.text.magenta })
+exports.alert = log('ALERT', { prefix_color: color.text.yellow, timestamp_color: color.text.green });
+exports.error = log('ERROR', { prefix_color: color.background.red, timestamp_color: color.text.red });
+exports.dbError = log('DB-ERROR', { prefix_color: color.background.red, timestamp_color: color.text.green });
+exports.driver = log('DRIVER', { prefix_color: color.text.yellow, timestamp_color: color.text.yellow });
