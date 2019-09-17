@@ -8,7 +8,7 @@ const fake_setex = store => async (key, value, time) => {
 module.exports = (store) => {
     const compare_result = compare.onKeys(broker, 'some', ['get', 'set', 'delete'], isFunction);
     if (compare_result !== true) {
-        throw driverError('KeyValueStore', `Initialization failed! - ${JSON.stringify(compare_result)}`);
+        throw driverError('KeyValueStore', `Initialization failed!`, compare_result);
     }
     if (!isFunction(store['setex'])) {
         store['setex'] = fake_setex(store);

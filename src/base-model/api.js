@@ -7,7 +7,7 @@ module.exports = (model, { rest = false, websocket = false, port }) => {
 
     const compare_result_start = compare.onKeys(model, 'some', ['apiHandler'], isFunction)
     if (compare_result_start !== true) {
-        throw apiError(`Api:${port}`, `Initialization failed! ${compare_result_start}`)
+        throw apiError(`uWS:${port}`, `Initialization failed!`, compare_result_start)
     }
 
     if (!!websocket) {
@@ -28,7 +28,7 @@ module.exports = (model, { rest = false, websocket = false, port }) => {
         if (!!token) {
             model.apiHandler('listen');
         } else {
-            throw apiError(`Api:${port}`, `Listening Failed! ${{ token }}`)
+            throw apiError(`uWS:${port}`, `Listening Failed!`, { token })
         }
     });
     return Model(model)

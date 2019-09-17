@@ -4,7 +4,7 @@ const logger = require('../../core/logger');
 module.exports = (broker, { json = false, logging = false } = { json: false, logging: false }) => {
     const compare_result = compare.onKeys(broker, 'some', ['subscribe', 'unsubscribe', 'publish', 'request'], isFunction);
     if (compare_result !== true) {
-        throw driverError(`MESSAGE-BROKER INITIALIZATION FAILED! ${JSON.stringify(compare_result)}`);
+        throw driverError(`MESSAGE-BROKER INITIALIZATION FAILED!`, compare_result);
     }
     const fromJSON = string => !!json ? JSON.parse(string) : string;
     const toJSON = obj => !!json ? JSON.stringify(obj) : obj;

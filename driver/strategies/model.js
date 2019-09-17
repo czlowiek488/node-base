@@ -6,7 +6,7 @@ module.exports = model => {
         compare.basic(isObject, model)
     ]);
     if (compare_result !== true) {
-        throw driverError(`Model`, `Initalization failed! ${compare_result}`)
+        throw driverError(`Model`, `Initalization failed!`, compare_result)
     }
     return Object.freeze(model);
 }
