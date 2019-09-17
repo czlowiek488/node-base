@@ -6,28 +6,28 @@ module.exports = ({ errorHandler, MessageBroker }) => async ({ family, name, Mod
         Compare.onKeys({ errorHandler }, 'some', ['errorHandler'], value => !(value instanceof Function))
     ]);
     if (compare_result !== true) {
-        throw Error(`MICRO-SERVICE INITIALIZATION FAILED! ${JSON.stringify(compare_result)}`)
+        throw Error(`MICRO-SERVICE INITIALIZATION FAILED! ${compare_result}`)
     }
     const service_id = `${family}.${name}`;
     const model = await Model({
         name,
         family,
-        requestInternal: (channel_id, message) => MessageBroker.request(channel_id, JSON.stringify(message)).then(JSON.parse),
-        publishInternal: (channel_id, message) => MessageBroker.publish(channel_id, JSON.stringify(message)),
+        requestInternal: (channel_id, message) => MessageBroker.request(channel_id, message),
+        publishInternal: (channel_id, message) => MessageBroker.publish(channel_id, message),
     });
     if (!(model instanceof Object) || model.constructor.name !== 'Object') errorHandler(Error(`Model initalization failed for ${service_id}`))
     const { logic = {}, eventHandler = () => { } } = model;
     eventHandler({ event: 'starting', family, name, message: `Starting {${service_id}} MicroService...` });
     const requestHandler = async (request, replyTo) => {
         try {
-            const { endpoint, data } = JSON.parse(request);
+            const { endpoint, data } = request;
             if (!(logic[endpoint] instanceof Function)) errorHandler(Error(`EndpointIsMissing - ${request} - ${Object.keys(logic)}`));
             const result = await logic[endpoint](data);
-            eventHandler({ event: 'request', family, name, message: `Request for {${name}.${endpoint}(${JSON.stringify(result)}})` });
-            await MessageBroker.publish(replyTo, JSON.stringify(result));
+            eventHandler({ event: 'request', family, name, message: `Request for {${name}.${endpoint}(${result}})` });
+            await MessageBroker.publish(replyTo, result);
         } catch (e) {
             errorHandler({ event: 'error', family, name, request, error: e })
-            if (replyTo !== undefined) await MessageBroker.publish(replyTo, JSON.stringify({ success: false, error_name: e.name }))
+            if (replyTo !== undefined) await MessageBroker.publish(replyTo, { success: false, error_name: e.name })
         }
     }
     MessageBroker.subscribe(service_id, requestHandler);

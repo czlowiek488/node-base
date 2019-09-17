@@ -16,5 +16,7 @@ module.exports = connection => {
                     response instanceof Nats.NatsError
                         ? reject(response)
                         : resolve(response))),
+    }, {
+        json: true
     })
 };

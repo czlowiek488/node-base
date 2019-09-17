@@ -1,5 +1,5 @@
 const Api = require('../../driver/service/api');
-const MessageBroker = require('../../driver/broker/nats');
+const MessageBroker = require('../../driver/broker/json-nats');
 const ModelOne = ({ requestInternal }) => {
     const logic = {
         start: async ({ index }) => {
