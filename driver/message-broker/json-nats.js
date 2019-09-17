@@ -10,7 +10,7 @@ module.exports = connection => {
             nats.unsubscribe(channelId),
         publish: (channel, message) =>
             new Promise(resolve => nats.publish(channel, message, resolve)),
-        request: (channel, message, timeout = 10000, options = {}) =>
+        request: (channel, message, timeout = 5000, options = {}) =>
             new Promise((resolve, reject) =>
                 nats.requestOne(channel, message, options, timeout, response =>
                     response instanceof Nats.NatsError
