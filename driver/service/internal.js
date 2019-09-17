@@ -1,3 +1,2 @@
 const BaseService = require('./base');
-const { debug } = require('../../core/logger');
-module.exports = config => BaseService({ log: debug, family: 'INTERNAL', ...config });
+module.exports = ({ MessageBroker, config }) => BaseService(MessageBroker)({ family: 'INTERNAL', ...config });

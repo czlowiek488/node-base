@@ -1,11 +1,14 @@
+const Compare = require('../../core/validator/compare');
+
 const fake_setex = store => async (key, value, time) => {
-    await store.set(key, value); //make sure kv-pair is definedbefre delete event initaliziation
+    await store.set(key, value);
     setTimeout(() => store.delete(key), time);
 };
 
 module.exports = (store) => {
-    if (!(store['get'] instanceof Funtion && store['set'] instanceof Funtion && store['delete'] instanceof Funtion)) {
-        throw Error(`KEY-VALUE-STORE INITIALIZATION FAILED! - ${JSON.stringify({ get: store.get, set: store.set, delete: store.delete, setex: store.setex, received: store })}`);
+    const compare_result = Compare.onKeys(broker, 'some', ['get', 'set', 'delete'], value => !(value instanceof Function));
+    if (compare_result !== true) {
+        throw Error(`KEY-VALUE-STORE INITIALIZATION FAILED! - ${compare_result}`);
     }
     if (!(store['setex'] instanceof Function)) {
         store['setex'] = fake_setex(store);

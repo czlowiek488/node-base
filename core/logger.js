@@ -34,5 +34,5 @@ exports.error = (...message) =>
     log('ERROR', message, { prefix_color: color.background.red, timestamp_color: color.text.red });
 exports.dbError = (...message) =>
     log('DB-ERROR', ...message, { prefix_color: color.background.red, timestamp_color: color.text.green });
-exports.inspect = (...message, inspect_config = { depth: Infinity }) =>
-    log('INSPECT', [inspect(message, inspect_config)], { text_color: color.text.cyan });
+exports.inspect = (...message) =>
+    log('INSPECT', [inspect(message, { depth: Infinity })], { text_color: color.text.cyan });
