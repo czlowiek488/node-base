@@ -18,7 +18,7 @@ module.exports = ({ MessageBroker, family, name, model }) => {
             if (!isFunction(model[endpoint])) throw apiError(`MicroService:${service_id}`, 'model endpoint is missing', { missing_endpoint: endpoint, endpoints: Object.keys(model), request });
             const result = await model[endpoint](data);
             model.eventHandler('request', { family, name, message: `Request for {${name}.${endpoint}(${result}})` });
-            await MessageBroker.publish(replyTo, result);
+            if (replyTo !== undefined) await MessageBroker.publish(replyTo, result);
         } catch (e) {
             logger.error({ family, name, request, error: e })
             if (replyTo !== undefined) await MessageBroker.publish(replyTo, { success: false, error_name: e.name })

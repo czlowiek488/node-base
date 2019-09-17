@@ -2,8 +2,8 @@ const MessageBroker = require('../strategies/message-broker');
 const { basic: { isIstance } } = require('../../core/validator')
 const Nats = require('nats');
 
-module.exports = connection => {
-    const nats = Nats.connect(connection);
+module.exports = ({ address, logging } = {}) => {
+    const nats = Nats.connect(address);
     return MessageBroker({
         subscribe: (channel, callback, options = null) =>
             nats.subscribe(channel, (response, replyTo) => callback(response, replyTo), options),
@@ -18,6 +18,7 @@ module.exports = connection => {
                         ? reject(response)
                         : resolve(response))),
     }, {
-        json: true
+        json: true,
+        logging
     })
 };

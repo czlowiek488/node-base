@@ -20,7 +20,7 @@ const color = {
 }
 
 const createLogger = (prefix, { deep = false, timestamp_color = color.text.blue, prefix_color = color.text.magenta, text_color = color.text.white, log_type = 'log' }) =>
-    (...message) => console[log_type](timestamp_color, now(), prefix_color, prefix, text_color, ...message, color.normal);
+    (...message) => console[log_type](timestamp_color, now(), color.normal, '|', prefix_color, prefix.slice(0, 10).padEnd(10, ' '), '->', text_color, ...message, color.normal);
 
 exports.trace = createLogger('TRACE', { log_type: 'trace', prefix_color: color.background.white });
 exports.inspect = createLogger('INSPECT', { deep: true, text_color: color.text.cyan });

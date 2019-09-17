@@ -1,12 +1,13 @@
 const MicroService = require('../../driver/strategies/micro-service');
-const MessageBroker = require('../../driver/message-broker/json-nats')();
+const MessageBroker = require('../../driver/message-broker/json-nats')({ logging: true });
 const Model = require('../../driver/strategies/model');
 const ApiModel = require('../../src/base-model/api');
 const logger = require('../../core/logger');
+const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));
 const ModelOne = ({
-    start: async ({ index }) => {
-        const { index: new_index } = await MessageBroker.request('Test.2', { endpoint: 'test', data: { index } });
-        return { index: new_index + 1 };
+    count: async ({ index }) => {
+        await sleep(150);
+        MessageBroker.publish('Test.2', { endpoint: 'log', data: { index: index + 1 } });
     },
     eventHandler: () => { },
     apiHandler: (event_name, res, req) => {
@@ -16,8 +17,10 @@ const ModelOne = ({
 })
 
 const ModelTwo = ({
-    test: async ({ index }) => {
-        return { index: index + 1 };
+    log: async ({ index }) => {
+        logger.debug({ index });
+        await sleep(150);
+        MessageBroker.publish('Test.1', { endpoint: 'count', data: { index } });
     },
     eventHandler: () => { }
 });
@@ -25,4 +28,4 @@ const ModelTwo = ({
 const errorHandler = error => logger.debug({ error }) || ({ error });
 MicroService({ MessageBroker, errorHandler, family: 'Test', name: '1', model: ApiModel(ModelOne, { port: 4100, websocket: true }) });
 MicroService({ MessageBroker, errorHandler, family: 'Test', name: '2', model: Model(ModelTwo) });
-MessageBroker.request('Test.1', { endpoint: 'start', data: { index: 0 } }).then(logger.debug)
+MessageBroker.publish('Test.1', { endpoint: 'count', data: { index: 0 } });

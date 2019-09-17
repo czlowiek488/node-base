@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('../env');
 const { isObject, isArray, isFunction, isString } = require('./basic')
 const { typeError } = require('../error');
 
