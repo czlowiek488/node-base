@@ -14,13 +14,13 @@ module.exports = (model, { rest = false, websocket = false, port }) => {
             maxPayloadLength: 1024,
             idleTimeout: 60 * 15,
             compression: 1,
-            close: (ws, code, message) => { model.apiHandler('ws-close', ws, { message, code }) }, //publishInternal
-            open: (ws, req) => { model.apiHandler('ws-open', ws, req) }, //TODO publishInternal
-            message: (ws, message, is_binary) => { model.apiHandler('ws-message', ws, { message, is_binary }) }, //TODO here requestInternal
+            close: (ws, code, message) => { model.apiHandler('ws-close', ws, { message, code }) },
+            open: (ws, req) => { model.apiHandler('ws-open', ws, req) },
+            message: (ws, message, is_binary) => { model.apiHandler('ws-message', ws, { message, is_binary }) },
         });
     }
     if (!!rest) {
-        app.post('/*', (res, req) => { model.apiHandler('rest-message', res, req) }) //TODO requestInternal
+        app.post('/*', (res, req) => { model.apiHandler('rest-message', res, req) })
     }
 
     app.listen(port, token => {
