@@ -1,4 +1,4 @@
-const MessageBroker = require('../../core/strategies/message-broker');
+const MessageBroker = require('../strategies/message-broker');
 const Nats = require('nats');
 
 module.exports = connection => {

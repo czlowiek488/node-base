@@ -1,4 +1,4 @@
-module.exports = ({ errorHandler, MessageBroker }) => ({ log, family }) => ({ name, logic }) => {
+module.exports = ({ errorHandler, MessageBroker }) => ({ log, family, name, logic }) => {
     const service_id = `${family}.${name}`;
     log({ event: 'start', family, name, message: `Starting {${service_id}} MicroService...` });
     const requestHandler = async request => {

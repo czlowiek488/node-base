@@ -1,4 +1,4 @@
-const KeyValueStore = require('../../core/strategies/key-value-store');
+const KeyValueStore = require('../strategies/key-value-store');
 const Redis = require('../../core/redis');
 const { error } = require('../../core/logger');
 
