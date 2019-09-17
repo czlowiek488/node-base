@@ -1,4 +1,5 @@
 const { compare, basic: { isFunction } } = require('../../core/validator');
+const { apiError } = require('../../core/error');
 const uWS = require('uWebSockets.js')
 const Model = require('../../driver/strategies/model');
 module.exports = (model, { rest = false, websocket = false, port }) => {
@@ -6,7 +7,7 @@ module.exports = (model, { rest = false, websocket = false, port }) => {
 
     const compare_result_start = compare.onKeys(model, 'some', ['apiHandler'], isFunction)
     if (compare_result_start !== true) {
-        throw Error(`API INITIALIZATION FAILED! ${JSON.stringify(compare_result_start)}`)
+        throw apiError(`Api:${port}`, `Initialization failed! ${compare_result_start}`)
     }
 
     if (!!websocket) {
@@ -27,7 +28,7 @@ module.exports = (model, { rest = false, websocket = false, port }) => {
         if (!!token) {
             model.apiHandler('listen');
         } else {
-            throw Error(`API Listening Failed! ${JSON.stringify({ token })}`)
+            throw apiError(`Api:${port}`, `Listening Failed! ${{ token }}`)
         }
     });
     return Model(model)

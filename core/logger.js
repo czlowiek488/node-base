@@ -36,3 +36,5 @@ exports.dbError = (...message) =>
     log('DB-ERROR', ...message, { prefix_color: color.background.red, timestamp_color: color.text.green });
 exports.inspect = (...message) =>
     log('INSPECT', [inspect(message, { depth: Infinity })], { text_color: color.text.cyan });
+exports.driver = (...message) =>
+    log('DRIVER', ...message, { prefix_color: color.text.yellow, timestamp_color: color.text.yellow });
