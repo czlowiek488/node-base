@@ -1,7 +1,5 @@
 const Api = require('../../driver/service/api');
 const MessageBroker = require('../../driver/broker/nats');
-const Nats = MessageBroker();
-
 const ModelOne = ({ requestInternal }) => {
     const logic = {
         start: async ({ index }) => {
@@ -12,18 +10,20 @@ const ModelOne = ({ requestInternal }) => {
     return Object.freeze({ logic });
 };
 const ModelTwo = ({ requestInternal }) => {
+    const run = () =>
+        requestInternal('API.Test1', { endpoint: 'start', data: { index: 0 } }).then(console.log);
     const logic = {
         test: async ({ index }) => {
             return { index: index + 1 };
         }
     };
-    const eventHandler = ({ event, message }) => {
+    const eventHandler = ({ event }) => {
         switch (event) {
-            case 'running': requestInternal('API.Test1', { endpoint: 'start', data: { index: 0 } }).then(console.log)
+            case 'running': run()
         }
     }
     return Object.freeze({ logic, eventHandler });
 }
 
-Api({ MessageBroker: Nats, config: { name: 'Test1', Model: ModelOne } });
-Api({ MessageBroker: Nats, config: { name: 'Test2', Model: ModelTwo } });
+Api({ MessageBroker: MessageBroker(), config: { name: 'Test1', Model: ModelOne } });
+Api({ MessageBroker: MessageBroker(), config: { name: 'Test2', Model: ModelTwo } });
