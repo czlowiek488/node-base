@@ -1,0 +1,34 @@
+const Compare = require('../../core/validator/compare');
+const uWS = require('uWebSockets.js')
+const Model = require('../../driver/strategies/model');
+module.exports = (model, { rest = false, websocket = false, port }) => {
+    const app = uWS.App({});
+
+    const compare_result_start = Compare.onKeys(model, 'some', ['apiHandler'], value => value instanceof Function)
+    if (compare_result_start !== true) {
+        throw Error(`API INITIALIZATION FAILED! ${JSON.stringify(compare_result_start)}`)
+    }
+
+    if (!!websocket) {
+        app.ws('/*', {
+            maxPayloadLength: 1024,
+            idleTimeout: 60 * 15,
+            compression: 1,
+            close: (ws, code, message) => { model.apiHandler('ws-close', ws, { message, code }) }, //publishInternal
+            open: (ws, req) => { model.apiHandler('ws-open', ws, req) }, //TODO publishInternal
+            message: (ws, message, is_binary) => { model.apiHandler('ws-message', ws, { message, is_binary }) }, //TODO here requestInternal
+        });
+    }
+    if (!!rest) {
+        app.post('/*', (res, req) => { model.apiHandler('rest-message', res, req) }) //TODO requestInternal
+    }
+
+    app.listen(port, token => {
+        if (!!token) {
+            model.apiHandler('listen');
+        } else {
+            throw Error(`API Listening Failed! ${JSON.stringify({ token })}`)
+        }
+    });
+    return Model(model)
+};

@@ -6,9 +6,9 @@ const fake_setex = store => async (key, value, time) => {
 };
 
 module.exports = (store) => {
-    const compare_result = Compare.onKeys(broker, 'some', ['get', 'set', 'delete'], value => !(value instanceof Function));
+    const compare_result = Compare.onKeys(broker, 'some', ['get', 'set', 'delete'], value => value instanceof Function);
     if (compare_result !== true) {
-        throw Error(`KEY-VALUE-STORE INITIALIZATION FAILED! - ${compare_result}`);
+        throw Error(`KEY-VALUE-STORE INITIALIZATION FAILED! - ${JSON.stringify(compare_result)}`);
     }
     if (!(store['setex'] instanceof Function)) {
         store['setex'] = fake_setex(store);
