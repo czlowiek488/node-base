@@ -5,3 +5,5 @@ exports.isArray = value => this.isIstance(value, Array);
 
 exports.isPrimitiv = (value, primitiv_type) => typeof value === primitiv_type;
 exports.isString = value => this.isPrimitiv(value, 'string');
+
+exports.isNull = value => value === null;

@@ -10,7 +10,6 @@ module.exports = ({ MessageBroker, family, name, model }) => {
         throw driverError(`MicroService`, `Initialization Failed!`, compare_result)
     }
     const service_id = `${family}.${name}`;
-
     model.eventHandler('starting', { family, name, message: `Starting {${service_id}} MicroService...` });
     const requestHandler = async (request, replyTo) => {
         try {
