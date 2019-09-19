@@ -6,4 +6,6 @@ exports.isArray = value => this.isIstance(value, Array);
 exports.isPrimitiv = (value, primitiv_type) => typeof value === primitiv_type;
 exports.isString = value => this.isPrimitiv(value, 'string');
 
-exports.isNull = value => value === null;
+exports.isEqual = (value1, value2) => value1 === value2;
+exports.isNull = value => this.isEqual(value, null)
+exports.isUndefined = value => this.isEqual(value, undefined);

@@ -2,17 +2,21 @@ const uWS = require('uWebSockets.js');
 const Server = require('../../driver/strategies/server');
 const { compare, basic: { isFunction } } = require('../../core/validator');
 const { apiError } = require('../../core/error');
-module.exports = () => {
-    const server = uWS.App({});
+module.exports = ({
+    ssl_key_abs_path,
+    ssl_cert_abs_path,
+    max_payload_bytes = 16 * 1024 * 1024,
+    idle_connection_timeout_seconds = 60 * 15
+}) => {
+    const server = uWS.App({
+        key_file_name: ssl_key_abs_path,
+        cert_file_name: ssl_cert_abs_path,
+    });
     const accessable = {
         ws(wsHandler) {
-            const compare_result = compare.basic(isFunction, wsHandler);
-            if (compare_result !== true) {
-                throw apiError(`uWS:${port}`, 'wsHandler is not function!', compare_result)
-            }
             server.ws('/*', {
-                maxPayloadLength: 1024,
-                idleTimeout: 60 * 15,
+                maxPayloadLength: max_payload_bytes,
+                idleTimeout: idle_connection_timeout_seconds,
                 compression: 1,
                 close: (ws, code, message) => wsHandler('ws-close', ws, { message, code }),
                 open: (ws, req) => wsHandler('ws-open', ws, req),
@@ -20,25 +24,17 @@ module.exports = () => {
             });
         },
         rest(restHandler) {
-            const compare_result = compare.basic(isFunction, restHandler);
-            if (compare_result !== true) {
-                throw apiError(`uWS:${port}`, 'restHandler is not function!', compare_result)
-            }
             server.post('/*', (res, req) => restHandler('rest-message', res, req))
         },
         listen(port, apiHandler) {
-            const compare_result = compare.basic(isFunction, apiHandler);
-            if (!compare_result) {
-                throw apiError(`uWS:${port}`, 'apiHandler is not defined!', compare_result)
-            }
             server.listen(port, token => {
                 if (!!token) {
                     apiHandler('listen');
                 } else {
-                    throw apiError(`uWS:${port}`, `Listening Failed!`, { token })
+                    throw apiError(`Server:uWS:${port}`, `Listening Failed!`, { token })
                 }
             });
         }
     };
-    return Server(accessable);
+    return Server(accessable, { is_websocket: true, is_rest: true });
 };

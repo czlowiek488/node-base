@@ -10,20 +10,20 @@ const productionValidators = {
             : keys
                 .filter(key => comparator(object[key]))
                 .map(key => isObject(object[key])
-                    ? { validator: 'onKeys', key, type: typeof object[key], instance: object[key].constructor.name }
-                    : { validator: 'onKeys', key, type: typeof object[key] });
+                    ? { validator: 'onKeys', key, type: typeof object[key], instance: object[key].constructor.name, data: object[key] }
+                    : { validator: 'onKeys', key, type: typeof object[key], data: object[key] });
     },
     many(tests) {
         const result = tests.filter(test => test !== true)
         return result.length !== 0
-            ? result
+            ? new Map(Object.entries(tests))
             : true;
     },
     basic(checker, value, is_positiv = true) {
         const result = is_positiv ? checker(value) : !checker(value);
         return result === true
             ? result
-            : { validator: 'basic', checker: checker.name, type: typeof value };
+            : { validator: 'basic', checker: checker.name, type: typeof value, value };
     },
 };
 

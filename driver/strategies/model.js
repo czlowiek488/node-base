@@ -1,4 +1,4 @@
-const { compare, basic: { isObject, isFunction } } = require('../../core/validator');
+const { compare, basic: { isObject, isFunction, isNull } } = require('../../core/validator');
 const { driverError } = require('../../core/error');
 module.exports = model => {
     const compare_result = compare.many([
