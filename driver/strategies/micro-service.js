@@ -1,27 +1,35 @@
 const { compare, basic: { isFunction, isString, isObject } } = require('../../core/validator');
 const { driverError } = require('../../core/error');
 const logger = require('../../core/logger');
-module.exports = ({ messageBroker, service_id, model }) => {
+module.exports = ({ model, messageBroker }) => {
     const compare_result = compare.many([
-        compare.basic(isString, service_id),
+        compare.basic(isString, model.name),
         compare.basic(isObject, model),
     ]);
     if (compare_result !== true) {
-        throw driverError(`MicroService:${service_id}`, `Initialization Failed!`, compare_result)
+        throw driverError(`MicroService:${model.name}`, `Initialization Failed!`, compare_result)
     }
-    model.eventHandler('starting', { service_id, message: `Starting {${service_id}} MicroService...` });
+    model.emit('start', { message: `Starting ${model.name}!`, });
     const requestHandler = async (request, replyTo) => {
+        const compare_result = compare.many([
+            compare.basic(isString, request.endpoint),
+            compare.basic(isObject, request.data),
+        ]);
+        if (compare_result !== true) {
+            if (replyTo !== undefined) await messageBroker.publish(replyTo, { success: false, error_name: 'Invalid Request!' });
+            return;
+        }
+        const { endpoint, data } = request;
         try {
-            const { endpoint, data } = request;
-            if (!isFunction(model[endpoint])) throw driverError(`MicroService:${service_id}`, 'model endpoint is missing', { missing_endpoint: endpoint, endpoints: Object.keys(model), request });
+            model.emit('request', endpoint, data);
+            if (!isFunction(model[endpoint])) throw driverError(`MicroService:${model.name}`, 'model endpoint is missing', { missing_endpoint: endpoint, request, model });
             const result = await model[endpoint](data);
-            model.eventHandler('request', { service_id, message: `Request for {${service_id}.${endpoint}(${result}})` });
             if (replyTo !== undefined) await messageBroker.publish(replyTo, result);
         } catch (e) {
-            logger.error({ request, error: e })
+            logger.error(`MicroService:${model.name}`, { endpoint, data, error: e })
             if (replyTo !== undefined) await messageBroker.publish(replyTo, { success: false, error_name: e.name })
         }
     }
-    messageBroker.subscribe(service_id, requestHandler);
-    model.eventHandler('running', { service_id, message: `Running {${service_id}} MicroService...` });
+    messageBroker.subscribe(model.name, requestHandler);
+    model.emit('run');
 }

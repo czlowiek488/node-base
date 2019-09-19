@@ -12,23 +12,23 @@ module.exports = ({
         cert_file_name: ssl_cert_abs_path,
     });
     const accessable = {
-        ws(wsHandler) {
+        ws(emit) {
             server.ws('/*', {
                 maxPayloadLength: max_payload_bytes,
                 idleTimeout: idle_connection_timeout_seconds,
                 compression: 1,
-                close: (ws, code, message) => wsHandler('ws-close', ws, { message, code }),
-                open: (ws, req) => wsHandler('ws-open', ws, req),
-                message: (ws, message, is_binary) => wsHandler('ws-message', ws, { message: String.fromCharCode.apply(null, new Uint8Array(message)), is_binary }),
+                close: (ws, code, message) => emit('ws-close', ws, { message, code }),
+                open: (ws, req) => emit('ws-open', ws, req),
+                message: (ws, message, is_binary) => emit('ws-message', ws, { message: String.fromCharCode.apply(null, new Uint8Array(message)), is_binary }),
             });
         },
-        rest(restHandler) {
-            server.post('/*', (res, req) => restHandler('rest-message', res, req))
+        rest(emit) {
+            server.post('/*', (res, req) => emit('rest-message', res, req))
         },
-        listen(port, apiHandler) {
+        listen(port, emit) {
             server.listen(port, token => {
                 if (!!token) {
-                    apiHandler('listen');
+                    emit('listen', { port, token });
                 } else {
                     throw apiError(`Server:uWS:${port}`, `Listening Failed!`, { token })
                 }
