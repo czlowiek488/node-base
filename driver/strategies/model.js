@@ -1,6 +1,10 @@
 const { compare, basic: { isFunction, isString } } = require('../../core/validator');
 const { driverError } = require('../../core/error');
 module.exports = (model, { name }) => {
+    const compare_result = compare.basic(isString, name)
+    if (compare_result !== true) {
+        throw driverError(`Model:${model.name}`, `Initialization Failed!`, compare_result)
+    }
     const events = {};
     const getEventListeners = event_name => events[event_name] || [];
     const emitEvent = (event_name, ...args) =>

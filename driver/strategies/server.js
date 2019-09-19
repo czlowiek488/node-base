@@ -1,6 +1,5 @@
 const { compare, basic: { isFunction, isString, isEqual } } = require('../../core/validator');
 const { driverError } = require('../../core/error');
-const logger = require('../../core/logger')
 const Model = require('../strategies/model');
 module.exports = (server, { is_websocket, is_rest }) => (model, { rest = false, websocket = false, port, ...model_config }) => {
     const server_model = Model(model, model_config);

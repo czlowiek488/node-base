@@ -19,7 +19,12 @@ const model = serverModel(
             ws.send('PING')
         }
     },
-    { port: 4100, websocket: true, name: 'Server.WS' });
+    {
+        name: 'Server.WS',
+        port: 4100,
+        websocket: true,
+    }
+);
 model.on('ws-open', ws => model.ping(ws));
 model.on('ws-message', async (ws, { message }) => {
     if (message === 'PONG') {

@@ -1,11 +1,8 @@
 const { compare, basic: { isFunction, isString, isObject } } = require('../../core/validator');
 const { driverError } = require('../../core/error');
 const logger = require('../../core/logger');
-module.exports = ({ model, messageBroker }) => {
-    const compare_result = compare.many([
-        compare.basic(isString, model.name),
-        compare.basic(isObject, model),
-    ]);
+module.exports = ({ messageBroker, model }) => {
+    const compare_result = compare.basic(isObject, model)
     if (compare_result !== true) {
         throw driverError(`MicroService:${model.name}`, `Initialization Failed!`, compare_result)
     }
