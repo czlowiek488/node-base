@@ -1,6 +1,5 @@
 const uWS = require('uWebSockets.js');
 const Server = require('../../driver/strategies/server');
-const { compare, basic: { isFunction } } = require('../../core/validator');
 const { apiError } = require('../../core/error');
 module.exports = ({
     ssl_key_abs_path,
@@ -20,7 +19,7 @@ module.exports = ({
                 compression: 1,
                 close: (ws, code, message) => wsHandler('ws-close', ws, { message, code }),
                 open: (ws, req) => wsHandler('ws-open', ws, req),
-                message: (ws, message, is_binary) => wsHandler('ws-message', ws, { message, is_binary }),
+                message: (ws, message, is_binary) => wsHandler('ws-message', ws, { message: String.fromCharCode.apply(null, new Uint8Array(message)), is_binary }),
             });
         },
         rest(restHandler) {

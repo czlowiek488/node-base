@@ -13,8 +13,12 @@ const test = {
     wsHandler: (event_name, ws, req) => {
         if (event_name === 'ws-open') {
             logger.debug({ via: req.getUrl() })
-            ws.send('[0,{"x":"x"}]');
+            ws.send('PING');
         };
+        if (event_name === 'ws-message') {
+            logger.debug({ req });
+            ws.send('PING');
+        }
         logger.debug('api-event', event_name);
     },
     apiHandler: (event_name) => {
@@ -23,6 +27,6 @@ const test = {
 };
 
 MicroService({
-    family: 'Server', name: 'WS', messageBroker,
+    service_id: 'Server.WS', messageBroker,
     model: serverModel(test, { port: 4100, websocket: true }),
 });
