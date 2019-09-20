@@ -11,6 +11,27 @@ module.exports = ({
         key_file_name: ssl_key_abs_path,
         cert_file_name: ssl_cert_abs_path,
     });
+    const readJson = (res, cb, err) => {
+        let buffer;
+        const end = buff => {
+            try {
+                cb(JSON.parse(buff));
+            } catch (e) {
+                res.close();
+                return;
+            }
+        };
+        res.onData((ab, is_last) => {
+            const chunk = Buffer.from(ab);
+            if (is_last) {
+                if (buffer) { end(Buffer.concat([buffer, chunk])) }
+                else { end(chunk) }
+            } else {
+                buffer = Buffer.concat(buffer ? [buffer, chunk] : [chunk]);
+            }
+        });
+        res.onAborted(err);
+    }
     const accessable = {
         ws(emit) {
             server.ws('/*', {
@@ -23,7 +44,11 @@ module.exports = ({
             });
         },
         rest(emit) {
-            server.post('/*', (res, req) => emit('rest-message', res, req))
+            server.post('/*', (res, req) => readJson(res,
+                json => emit('rest-message', res, req, json),
+                (e) => {
+                    throw apiError(`Server:uWS:${port}`, 'Rest Message JSON serialization failed!', { req, res, e });
+                }))
         },
         listen(port, emit) {
             server.listen(port, token => {

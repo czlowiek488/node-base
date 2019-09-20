@@ -1,4 +1,4 @@
-const { compare, basic: { isFunction, isString, isEqual } } = require('../../core/validator');
+const { compare, basic: { isFunction, isString } } = require('../../core/validator');
 const { driverError } = require('../../core/error');
 const Model = require('../strategies/model');
 module.exports = (server, { is_websocket, is_rest }) => (model, { rest = false, websocket = false, port, ...model_config }) => {
@@ -10,7 +10,7 @@ module.exports = (server, { is_websocket, is_rest }) => (model, { rest = false, 
                 && server.ws instanceof Function
                 || !websocket)
             && (is_rest
-                && server.post instanceof Function
+                && server.rest instanceof Function
                 || !rest),
             { is_websocket, is_rest, rest, websocket })
     ]);
@@ -18,7 +18,7 @@ module.exports = (server, { is_websocket, is_rest }) => (model, { rest = false, 
         throw driverError(`Server:${port}:${[!!rest ? 'REST' : null, !!websocket ? 'WEBSOCKET' : null].filter(isString).join('+')}`, `Initialization failed!`, compare_result)
     }
     if (!!websocket) server.ws(server_model.emit);
-    if (!!rest) server.post(server_model.emit);
+    if (!!rest) server.rest(server_model.emit);
 
     server_model.on('start', () => server.listen(port, server_model.emit))
     return server_model;

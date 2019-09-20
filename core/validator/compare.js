@@ -1,4 +1,5 @@
 require('../env');
+const { inspect } = require('util');
 const { isObject, isArray, isFunction, isString } = require('./basic')
 const { typeError } = require('../error');
 
@@ -10,8 +11,8 @@ const productionValidators = {
             : keys
                 .filter(key => comparator(object[key]))
                 .map(key => isObject(object[key])
-                    ? { validator: 'onKeys', key, type: typeof object[key], instance: object[key].constructor.name, data: object[key] }
-                    : { validator: 'onKeys', key, type: typeof object[key], data: object[key] });
+                    ? inspect({ validator: 'onKeys', key, type: typeof object[key], instance: object[key].constructor.name, data: object[key] }, { depth: Infinity })
+                    : inspect({ validator: 'onKeys', key, type: typeof object[key], data: object[key] }, { depth: Infinity }));
     },
     many(tests) {
         const result = tests.filter(test => test !== true)
@@ -23,7 +24,7 @@ const productionValidators = {
         const result = is_positiv ? checker(value) : !checker(value);
         return result === true
             ? result
-            : { validator: 'basic', checker: checker.name, type: typeof value, value };
+            : inspect({ validator: 'basic', checker: checker.name, type: typeof value, value }, { depth: Infinity });
     },
 };
 
