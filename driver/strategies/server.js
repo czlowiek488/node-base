@@ -17,7 +17,7 @@ module.exports = (server, { is_websocket, is_rest }) => (model, { rest = false, 
     if (compare_result !== true) {
         throw driverError(`Server:${port}:${[!!rest ? 'REST' : null, !!websocket ? 'WEBSOCKET' : null].filter(isString).join('+')}`, `Initialization failed!`, compare_result)
     }
-    if (!!websocket) server.ws(server_model.emit);
+    if (!!websocket) server.ws(server_model.emit, server_model.on);
     if (!!rest) server.rest(server_model.emit);
 
     server_model.on('start', () => server.listen(port, server_model.emit))

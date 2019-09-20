@@ -16,7 +16,7 @@ const model = serverModel(
         async ping(ws) {
             await sleep(1000);
             logger.debug('PING')
-            ws.send('PING')
+            this.emit('ws-send', ws, { message: 'PING' })
         }
     },
     {
@@ -28,7 +28,7 @@ const model = serverModel(
 model.on('ws-open', ws => model.ping(ws));
 model.on('ws-message', async (ws, { message }) => {
     if (message === 'PONG') {
-        logger.debug('PONG');
+        logger.debug({ message });
         model.ping(ws);
     }
 });
